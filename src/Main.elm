@@ -9,6 +9,7 @@ import Html.Events exposing (onInput)
 type alias Model =
     { day : Day
     , direction : Direction
+    , shape : Shape
     }
 
 
@@ -29,15 +30,39 @@ type Day
     | Saturday
 
 
+type Shape
+    = Rectangle Length Width
+    | Circle Radius
+    | Prism Length Width Height
+
+
+type alias Length =
+    Float
+
+
+type alias Width =
+    Float
+
+
+type alias Height =
+    Float
+
+
+type alias Radius =
+    Float
+
+
 type Msg
     = NewDay Day
     | NewDirection Direction
+    | NewShape Shape
 
 
 emptyModel : Model
 emptyModel =
     { day = Friday
     , direction = North
+    , shape = Circle 0.0
     }
 
 
@@ -49,6 +74,9 @@ update msg model =
 
         NewDirection direction' ->
             { model | direction = direction' }
+
+        NewShape shape' ->
+            { model | shape = shape' }
     )
         |> Debug.log "update.result"
 
@@ -90,6 +118,17 @@ makeFromString' xs =
         fromString'
 
 
+selectify : (a -> msg) -> List a -> Html msg
+selectify msg xs =
+    let
+        optionize x =
+            option [ (value << toString) x ]
+                [ (text << toString) x ]
+    in
+        select [ onInput (msg << makeFromString' xs) ]
+            (List.map optionize xs)
+
+
 view : Model -> Html Msg
 view model =
     let
@@ -99,20 +138,28 @@ view model =
         days =
             [ Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday ]
 
-        optionize dir =
-            option [ (value << toString) dir ]
-                [ (text << toString) dir ]
+        shapes =
+            [ Rectangle 2.0 4.0
+            , Rectangle 3.0 3.0
+            , Rectangle 4.0 2.0
+            , Circle 1.0
+            , Circle 2.0
+            , Prism 1.0 2.0 3.0
+            , Prism 2.0 3.0 1.0
+            ]
     in
         div [ style [ ( "padding", "5rem" ) ] ]
-            [ text <| "The direction is: " ++ toString model.direction
+            [ text <| "Selected direction is: " ++ toString model.direction
             , br [] []
-            , select [ onInput (NewDirection << makeFromString' directions) ]
-                (List.map optionize directions)
+            , selectify NewDirection directions
             , br [] []
-            , text <| "The day of the week is: " ++ toString model.day
+            , text <| "Selected day of the week is: " ++ toString model.day
             , br [] []
-            , select [ onInput (NewDay << makeFromString' days) ]
-                (List.map optionize days)
+            , selectify NewDay days
+            , br [] []
+            , text <| "Selected shape is: " ++ toString model.shape
+            , br [] []
+            , selectify NewShape shapes
             ]
 
 
