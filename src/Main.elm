@@ -1,9 +1,9 @@
 module Main exposing (main)
 
-import Html exposing (Html, Attribute, br, div, option, select, text)
+import Html exposing (Html, br, div, text)
 import Html.App exposing (beginnerProgram)
-import Html.Attributes exposing (style, value)
-import Html.Events exposing (onInput)
+import Html.Attributes exposing (style)
+import Select
 
 
 type alias Model =
@@ -81,54 +81,6 @@ update msg model =
         |> Debug.log "update.result"
 
 
-makeFromString : List a -> (String -> Maybe a)
-makeFromString xs =
-    let
-        fromString s =
-            let
-                matches =
-                    List.filter (\x -> toString x == s) xs
-            in
-                List.head matches
-                    |> Maybe.map
-                        (\match ->
-                            if List.length matches > 1 then
-                                Debug.crash "> 1 match in generic fromString"
-                            else
-                                match
-                        )
-    in
-        fromString
-
-
-makeFromString' : List a -> (String -> a)
-makeFromString' xs =
-    let
-        fromString =
-            makeFromString xs
-
-        fromString' s =
-            case fromString s of
-                Nothing ->
-                    Debug.crash "fromString returned Nothing in fromString'"
-
-                Just s ->
-                    s
-    in
-        fromString'
-
-
-selectify : (a -> msg) -> List a -> Html msg
-selectify msg xs =
-    let
-        optionize x =
-            option [ (value << toString) x ]
-                [ (text << toString) x ]
-    in
-        select [ onInput (msg << makeFromString' xs) ]
-            (List.map optionize xs)
-
-
 view : Model -> Html Msg
 view model =
     let
@@ -151,22 +103,22 @@ view model =
         div [ style [ ( "padding", "5rem" ) ] ]
             [ text <| "Selected direction is: " ++ toString model.direction
             , br [] []
-            , selectify NewDirection directions
+            , Select.from directions NewDirection
             , br [] []
             , text <| "Selected day of the week is: " ++ toString model.day
             , br [] []
-            , selectify NewDay days
+            , Select.from days NewDay
             , br [] []
             , text <| "Selected shape is: " ++ toString model.shape
             , br [] []
-            , selectify NewShape shapes
+            , Select.from shapes NewShape
             ]
 
 
 main : Program Never
 main =
     beginnerProgram
-        { model = Debug.log "emptyModel" emptyModel
+        { model = emptyModel
         , update = update
         , view = view
         }

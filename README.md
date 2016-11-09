@@ -4,4 +4,4 @@ Convienient select boxes for Elm.
 
 ## License
 
-Copyright (c) 2016 Superpowers Corp.
+Copyright (c) 2016 John Evans
