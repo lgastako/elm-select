@@ -1,7 +1,9 @@
 module Select exposing (from, from')
 
-{-| This module provides the `Select.from` helper make working with `select`
-elements from Elm easier.
+{-| This module provides the `from` (and more flexible `from'`) helpers to make
+working with `select` elements in Elm easier.
+
+[See full examples in github](https://github.com/lgastako/elm-select/blob/master/src/Main.elm)
 
 # Helpers
 @docs from, from'
@@ -19,9 +21,9 @@ into a `select` element which contains as it's values the list of values.
     from [North, South, East, West] Direction
 
 would produce a select element with box option values and labels being the
-string versions of four cardinal directions which would send messages
-like (Direction North) or (Direction East) when the user selects new directions
-from the drop down.
+string versions of four cardinal directions and which would send messages like
+`Direction North` or `Direction East` when the user selects new directions from
+the drop down.
 
 -}
 from : List a -> (a -> msg) -> Html msg
@@ -34,10 +36,12 @@ into a `select` element which contains as it's values the list of values.
 
     from' [North, South, East, West] Direction toId toLabel
 
-would produce a select element with box option values and labels being decided
-by the `toId` and `toLabel` functions, which would send messages
-like (Direction North) or (Direction East) when the user selects new directions
-from the drop down.
+like the `from` example above, this would produce a select element with box
+option values and labels being derived from the four cardinal directions and
+which would send messages like `Direction North` or `Direction East` when the
+user selects new directions from the drop down only the ids and labels would be
+derived using the `toId` and `toLabel` functions provided instead of defaulting
+to `toString` like `from`.
 
 -}
 from' : List a -> (a -> msg) -> (a -> String) -> (a -> String) -> Html msg
