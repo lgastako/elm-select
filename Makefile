@@ -7,6 +7,9 @@ help:
 build:
 	elm make --warn src/Main.elm --output=$(OUT)
 
+bump:
+	elm package bump
+
 clean:
 	$(NUKE) elm-stuff/build-artifacts $(OUT)
 
