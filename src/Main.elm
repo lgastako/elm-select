@@ -1,7 +1,6 @@
 module Main exposing (main)
 
-import Html exposing (Html, br, div, text)
-import Html.App exposing (beginnerProgram)
+import Html exposing (Html, beginnerProgram, br, div, text)
 import Html.Attributes exposing (style)
 import Select
 
@@ -69,14 +68,14 @@ emptyModel =
 update : Msg -> Model -> Model
 update msg model =
     (case msg of
-        NewDay day' ->
-            { model | day = day' }
+        NewDay day_ ->
+            { model | day = day_ }
 
-        NewDirection direction' ->
-            { model | direction = direction' }
+        NewDirection direction_ ->
+            { model | direction = direction_ }
 
-        NewShape shape' ->
-            { model | shape = shape' }
+        NewShape shape_ ->
+            { model | shape = shape_ }
     )
         |> Debug.log "update.result"
 
@@ -115,7 +114,7 @@ view model =
             ]
 
 
-main : Program Never
+main : Program Never Model Msg
 main =
     beginnerProgram
         { model = emptyModel
