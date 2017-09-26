@@ -11,7 +11,7 @@ with `select` elements in Elm easier.
 -}
 
 import Html exposing (Html, option, select, text)
-import Html.Attributes exposing (value, selected)
+import Html.Attributes exposing (class, selected, value)
 import Html.Events exposing (onInput)
 
 
@@ -26,9 +26,9 @@ string versions of four cardinal directions and which would send messages like
 the drop down.
 
 -}
-from : List a -> (a -> msg) -> Html msg
-from xs msg =
-    from_ xs msg toString toString
+from : List a -> (a -> msg) -> String -> Html msg
+from xs msg classes =
+    from_ xs msg toString toString classes
 
 
 {-| Convert a list of values and stringifying function for values of that type
@@ -47,6 +47,7 @@ fromSelected : List a -> (a -> msg) -> a -> Html msg
 fromSelected xs msg sel =
     fromSelected_ xs msg toString toString sel
 
+
 {-| Convert a list of values and stringifying function for values of that type
 into a `select` element which contains as its values the list of values.
 
@@ -60,14 +61,17 @@ derived using the `toId` and `toLabel` functions provided instead of defaulting
 to `toString` like `from`.
 
 -}
-from_ : List a -> (a -> msg) -> (a -> String) -> (a -> String) -> Html msg
-from_ xs msg toId toLabel =
+from_ : List a -> (a -> msg) -> (a -> String) -> (a -> String) -> String -> Html msg
+from_ xs msg toId toLabel classes =
     let
         optionize x =
             option [ (value << toId) x ]
                 [ (text << toLabel) x ]
     in
-        select [ onInput (msg << makeFromString_ xs) ]
+        select
+            [ class classes
+            , onInput (msg << makeFromString_ xs)
+            ]
             (List.map optionize xs)
 
 
@@ -89,7 +93,14 @@ fromSelected_ : List a -> (a -> msg) -> (a -> String) -> (a -> String) -> a -> H
 fromSelected_ xs msg toId toLabel sel =
     let
         optionize x =
-            option ([ (value << toId) x ] ++ (if x == sel then [ selected True ] else []))
+            option
+                ([ (value << toId) x ]
+                    ++ (if x == sel then
+                            [ selected True ]
+                        else
+                            []
+                       )
+                )
                 [ (text << toLabel) x ]
     in
         select [ onInput (msg << makeFromString_ xs) ]
